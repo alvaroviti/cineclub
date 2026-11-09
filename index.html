@@ -149,7 +149,10 @@ async function rpc(fn, args = {}) {
   try { r = await fetch(`${SUPABASE_URL.replace(/\/$/,'')}/rest/v1/rpc/${fn}`, { method:'POST', headers, body: JSON.stringify(args) }); }
   catch (e) { throw 'No se puede conectar con el servidor. Revisa tu conexión.'; }
   const txt = await r.text(); let data = null; try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
-  if (!r.ok) throw (data && data.code === 'P0001' && data.message) || 'Error del servidor (' + r.status + '). Inténtalo de nuevo.';
+  if (!r.ok) {
+    if (data && data.code === 'P0001' && data.message) throw data.message;
+    throw 'Error del servidor (' + r.status + (data && (data.code || data.message) ? ': ' + [data.code, data.message].filter(Boolean).join(' – ') : '') + ').';
+  }
   return data;
 }
 
@@ -166,7 +169,7 @@ async function refresh() {
     const st = await rpc('get_state', { p_token: S.token });
     if (S.token && !st.me) { S.token = null; setTok(null); }
     S.st = st; S.offline = false;
-  } catch (e) { S.offline = true; }
+  } catch (e) { S.offline = typeof e === 'string' ? e : 'No se puede conectar con el servidor.'; }
   render();
 }
 
@@ -299,7 +302,7 @@ function render() {
   const st = S.st;
   let html, ph = st ? st.phase : 'loading';
   if (!configured) html = viewSetup();
-  else if (!st) html = card(`<p class="center">${S.offline ? 'No se puede conectar con el servidor. Reintentando…' : 'Abriendo la taquilla…'}</p>`);
+  else if (!st) html = card(`<p class="center">${S.offline ? esc(S.offline) + '<br>Reintentando…' : 'Abriendo la taquilla…'}</p>`);
   else if (!st.me) html = viewAuth();
   else if (ph === 'propose') html = viewPropose();
   else if (ph === 'vote') html = viewVote();
