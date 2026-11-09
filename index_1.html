@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cineclub de Cuatro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#ECEFF4; --surface:#FFFFFF; --sunk:#F4F6F9; --ink:#1A2132; --muted:#5A6377; --line:#D3D9E3;
+  --accent:#A3203A; --accent-ink:#FFFFFF; --accent-soft:#F6E3E7; --gold:#9A6B00; --gold-soft:#F7EBCB;
+  --ok:#2C7A56; --ok-soft:#DFF1E8;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#11141C; --surface:#1A1F2C; --sunk:#151925; --ink:#E7EAF1; --muted:#9AA2B4; --line:#2B3244;
+  --accent:#E25A72; --accent-ink:#1A0A0E; --accent-soft:#3A1C25; --gold:#E3B54F; --gold-soft:#3A3018;
+  --ok:#5CC596; --ok-soft:#173327; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:640px;margin:0 auto;padding-top:max(28px,env(safe-area-inset-top,0px));padding-bottom:56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-display);font-weight:800;font-size:44px;line-height:.95;letter-spacing:.01em;margin:0;text-transform:uppercase;text-wrap:balance}
+h1 span{color:var(--accent)}
+h2{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:.02em;text-transform:uppercase;margin:0;line-height:1.05;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0}
+.who{font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.who b{color:var(--ink)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;list-style:none;padding:0;margin:0}
+.steps li{border-top:3px solid var(--line);padding-top:6px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.steps li.on{border-color:var(--accent);color:var(--ink)}
+.steps li.done{border-color:var(--ink);color:var(--ink)}
+.steps .n{font-family:var(--f-mono);margin-right:4px}
+main{display:flex;flex-direction:column;gap:20px}
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ticket .body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.stub{border-top:2px dashed var(--line);padding:12px 20px;background:var(--sunk);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.stub .mono{font-family:var(--f-mono);color:var(--ink)}
+.tabs{display:flex;gap:4px;background:var(--sunk);padding:4px;border-radius:8px;border:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:transparent;padding:8px;border-radius:6px;font:600 14px var(--f-body);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.tabs button:disabled{opacity:.45;cursor:not-allowed}
+form{display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600}
+input,select{font:16px var(--f-body);padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 110px;gap:10px}
+.btn{font:600 15px var(--f-body);padding:11px 16px;border-radius:8px;border:1px solid transparent;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.small{padding:6px 10px;font-size:13px}
+.link{background:none;border:0;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px}
+.msg{font-size:14px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);color:var(--ink)}
+.msg.ok{background:var(--ok-soft)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.seats{display:flex;gap:8px}
+.seat{flex:1;height:34px;border-radius:8px 8px 3px 3px;border:1px solid var(--line);background:var(--sunk);display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.seat.taken{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.envelopes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.env{aspect-ratio:3/4;max-width:100%;border:1px dashed var(--line);border-radius:6px;display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;color:var(--muted);text-align:center;padding:4px}
+.env.in{border-style:solid;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.film{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);flex-wrap:wrap}
+.film .t{font-weight:700;min-width:0;flex:1}
+.film .t small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--sunk);border:1px solid var(--line);white-space:nowrap}
+.chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.mine{border-style:dashed;opacity:.85}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+.check{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:600;font-size:13px;white-space:nowrap;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--ok)}
+.rank{display:flex;flex-direction:column;gap:8px;list-style:none;margin:0;padding:0}
+.rank li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.pos{font-family:var(--f-display);font-weight:800;font-size:30px;width:30px;text-align:center;color:var(--accent);line-height:1}
+.rank .t{flex:1;min-width:0;font-weight:700}
+.arrows{display:flex;gap:4px}
+.arrows button{width:34px;height:34px;border-radius:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);cursor:pointer;font-size:16px}
+.arrows button:disabled{opacity:.3;cursor:not-allowed}
+.list{display:flex;flex-direction:column;gap:8px}
+.progress{display:flex;gap:6px;width:100%}
+.progress span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.progress span.on{background:var(--ok)}
+.board{display:flex;flex-direction:column;gap:10px}
+.place{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.place.p1{background:var(--gold-soft);border-color:var(--gold)}
+.place .num{font-family:var(--f-display);font-weight:800;font-size:46px;line-height:.9;text-align:center}
+.place.p1 .num{color:var(--gold)}
+.place .t{min-width:0}
+.place .t b{display:block;font-size:17px}
+.place .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;align-items:center}
+.pts{font-family:var(--f-mono);font-size:22px;text-align:right;font-variant-numeric:tabular-nums}
+.pts small{display:block;font-size:11px;color:var(--muted);font-family:var(--f-body)}
+details.admin{font-size:13px;color:var(--muted)}
+details.admin summary{cursor:pointer;font-weight:600}
+details.admin .in{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+.confirm{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.center{text-align:center;color:var(--muted);padding:30px 0}
+code{font-family:var(--f-mono);font-size:13px}
+@media (max-width:420px){h1{font-size:38px}.row{grid-template-columns:1fr 90px}.place{grid-template-columns:42px 1fr auto}.place .num{font-size:38px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Cineclub <span>de&nbsp;Cuatro</span></h1>
+      <p class="sub">Cuatro amigos, cuatro películas, un ranking.</p>
+    </div>
+    <div class="who" id="who"></div>
+  </header>
+  <ol class="steps" id="steps">
+    <li><span class="n">1</span>Propuestas</li>
+    <li><span class="n">2</span>Ver y votar</li>
+    <li><span class="n">3</span>Top 4</li>
+  </ol>
+  <main id="app"><div class="ticket"><div class="body"><p class="center">Abriendo la taquilla…</p></div></div></main>
+  <div id="admin"></div>
+</div>
+
+<script>
+/* =============== CONFIGURACIÓN =============== *
+ * Pega aquí los datos de tu proyecto Supabase:
+ * Supabase > Project Settings > API (o "Data API" / "API Keys").
+ * La clave es la pública: "anon public" o "publishable". NUNCA la "service_role" / "secret".
+ */
+const SUPABASE_URL = "https://vtlrzxlaurntewlghgrs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_MF2eGEf1QBZ6A5aErJV0HA_pW7Gj_sw";
+/* ============================================= */
+
+(() => {
+const MAX = 4, POLL_MS = 5000;
+const PLATFORMS = [
+  ["Netflix","#E50914"],["Prime Video","#1A98FF"],["HBO Max","#5B2BE0"],["Disney+","#1C3FAA"],
+  ["Apple TV+","#8A8A8A"],["Movistar Plus+","#00A9E0"],["SkyShowtime","#3C3C9A"],["Filmin","#E8590C"]
+];
+const platColor = p => (PLATFORMS.find(x => x[0] === p) || [0,"#888"])[1];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const configured = /^https:\/\/.+/.test(SUPABASE_URL) && !SUPABASE_URL.includes('TU-PROYECTO') && !SUPABASE_KEY.includes('PEGA_AQUI');
+
+/* ---------- llamadas al servidor ---------- */
+async function rpc(fn, args = {}) {
+  const headers = { 'Content-Type': 'application/json', apikey: SUPABASE_KEY };
+  if (SUPABASE_KEY.startsWith('eyJ')) headers.Authorization = 'Bearer ' + SUPABASE_KEY; // claves "anon" antiguas (JWT)
+  let r;
+  try { r = await fetch(`${SUPABASE_URL.replace(/\/$/,'')}/rest/v1/rpc/${fn}`, { method:'POST', headers, body: JSON.stringify(args) }); }
+  catch (e) { throw 'No se puede conectar con el servidor. Revisa tu conexión.'; }
+  const txt = await r.text(); let data = null; try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
+  if (!r.ok) throw (data && data.code === 'P0001' && data.message) || 'Error del servidor (' + r.status + '). Inténtalo de nuevo.';
+  return data;
+}
+
+/* ---------- sesión ---------- */
+const SKEY = 'cineclub4.token';
+const getTok = () => { try { return localStorage.getItem(SKEY); } catch (e) { return null; } };
+const setTok = t => { try { t ? localStorage.setItem(SKEY, t) : localStorage.removeItem(SKEY); } catch (e) {} };
+
+/* ---------- estado ---------- */
+const S = { st:null, token:getTok(), tab:'login', msg:null, draft:null, editing:false, confirm:null, busy:false, offline:false };
+
+async function refresh() {
+  try {
+    const st = await rpc('get_state', { p_token: S.token });
+    if (S.token && !st.me) { S.token = null; setTok(null); }
+    S.st = st; S.offline = false;
+  } catch (e) { S.offline = true; }
+  render();
+}
+
+async function run(fn, okMsg) {
+  if (S.busy) return; S.busy = true; S.msg = null; render();
+  try { await fn(); if (okMsg) S.msg = { t: okMsg, ok: true }; }
+  catch (e) { S.msg = { t: typeof e === 'string' ? e : 'Algo ha fallado. Inténtalo de nuevo.' }; }
+  S.busy = false; await refresh();
+}
+
+/* ---------- vistas ---------- */
+const chip = p => `<span class="chip"><i style="background:${platColor(p)}"></i>${esc(p)}</span>`;
+const filmLine = m => `<span class="t">${esc(m.title)}${m.year ? ` <small>${esc(m.year)}</small>` : ''}</span>${chip(m.platform)}`;
+const msgBox = () => S.msg ? `<div class="msg${S.msg.ok ? ' ok' : ''}" role="status">${esc(S.msg.t)}</div>` : '';
+const card = (inner, stub='') => `<div class="ticket"><div class="body">${inner}</div>${stub}</div>`;
+const stub = (label, val) => `<div class="stub"><span>${label}</span><span class="mono">${val}</span></div>`;
+
+function viewSetup() {
+  return card(`<h2>Falta configurar</h2>
+    <p class="note">Abre <code>index.html</code> y rellena <code>SUPABASE_URL</code> y <code>SUPABASE_KEY</code> con los datos de tu proyecto de Supabase. Los pasos están en el archivo LEEME.</p>`);
+}
+
+function viewAuth() {
+  const n = S.st.players_count, full = n >= MAX;
+  if (full && S.tab === 'register') S.tab = 'login';
+  const reg = S.tab === 'register';
+  const seats = Array.from({length:MAX}, (_,i) => `<div class="seat${i<n?' taken':''}">${i<n?'●':i+1}</div>`).join('');
+  return card(`<h2>Taquilla</h2>
+    <div class="seats" aria-label="${n} de ${MAX} plazas ocupadas">${seats}</div>
+    <p class="note">${full ? 'Las 4 plazas están ocupadas. Solo los jugadores registrados pueden entrar.' : `Quedan ${MAX-n} ${MAX-n===1?'plaza':'plazas'}. Cada amigo crea su cuenta una sola vez.`}</p>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="login" aria-selected="${!reg}">Entrar</button>
+      <button role="tab" data-tab="register" aria-selected="${reg}" ${full?'disabled':''}>Crear cuenta</button>
+    </div>
+    ${msgBox()}
+    <form id="authForm" autocomplete="on">
+      <label>Usuario<input id="a_user" name="username" autocomplete="username" autocapitalize="none" required></label>
+      <label>Contraseña<input id="a_pass" type="password" autocomplete="${reg?'new-password':'current-password'}" required></label>
+      ${reg ? `<label>Repite la contraseña<input id="a_pass2" type="password" autocomplete="new-password" required></label>` : ''}
+      <button class="btn" ${S.busy?'disabled':''}>${reg ? 'Crear cuenta y entrar' : 'Entrar'}</button>
+    </form>
+    ${reg ? '<p class="note">Apunta tu contraseña. Si la olvidas, el organizador tendrá que borrar tu cuenta para que te registres de nuevo.</p>' : ''}`);
+}
+
+function viewPropose() {
+  const st = S.st, mine = st.my_movie, n = st.movies_count;
+  const envs = Array.from({length:MAX}, (_,i) => `<div class="env${i<n?' in':''}">${i<n?'SOBRE<br>CERRADO':'vacío'}</div>`).join('');
+  let form;
+  if (mine && !S.editing) {
+    form = `<div class="list"><span class="tag">Tu propuesta</span><div class="film">${filmLine(mine)}</div></div>
+      <div class="confirm"><button class="btn ghost small" data-act="edit">Cambiar</button><button class="btn ghost small" data-act="withdraw" ${S.busy?'disabled':''}>Retirar</button></div>`;
+  } else {
+    const opts = PLATFORMS.map(([p]) => `<option${mine && mine.platform===p ? ' selected' : ''}>${esc(p)}</option>`).join('');
+    form = `<form id="movieForm">
+      <div class="row">
+        <label>Película<input id="m_title" maxlength="120" placeholder="Ej.: Cadena perpetua" value="${esc(mine?mine.title:'')}" required></label>
+        <label>Año<input id="m_year" inputmode="numeric" maxlength="4" placeholder="1994" value="${esc(mine&&mine.year?mine.year:'')}"></label>
+      </div>
+      <label>Dónde verla<select id="m_plat" required><option value="" ${mine?'':'selected'} disabled>Elige plataforma</option>${opts}</select></label>
+      <div class="confirm"><button class="btn" ${S.busy?'disabled':''}>${mine?'Guardar cambios':'Meter en el sobre'}</button>${mine?'<button type="button" class="btn ghost" data-act="cancel">Cancelar</button>':''}</div>
+    </form>`;
+  }
+  return card(`<h2>Propón tu película</h2>
+    <p class="note">Las propuestas son anónimas y se destapan las cuatro a la vez cuando estén todas.</p>
+    <div class="envelopes">${envs}</div>${msgBox()}${form}`, stub('Propuestas recibidas', `${n}/${MAX}`));
+}
+
+function viewVote() {
+  const st = S.st, movies = st.movies, b = st.my_ballot || {}, seen = b.seen || [];
+  if (!st.my_movie) {
+    return card(`<h2>Votación</h2><p class="note">Las cuatro propuestas ya están dentro y ninguna es tuya. Solo votan quienes propusieron película en esta ronda.</p>
+      <div class="list">${movies.map(m => `<div class="film">${filmLine(m)}</div>`).join('')}</div>`);
+  }
+  const others = movies.filter(m => !m.mine);
+  const sent = Array.isArray(b.ranking) && b.ranking.length === 3;
+  if (!S.draft || S.draft.length !== others.length || S.draft.some(id => !others.find(m => m.id === id)))
+    S.draft = sent ? b.ranking.slice() : others.map(m => m.id);
+  const allSeen = others.every(m => seen.includes(m.id));
+  const changed = sent && S.draft.join() !== b.ranking.join();
+  const byId = id => movies.find(m => m.id === id);
+  const done = st.ballots_done;
+  const rankList = S.draft.map((id,i) => { const m = byId(id); return `<li><span class="pos">${i+1}</span><span class="t">${esc(m.title)}</span>
+    <span class="arrows"><button data-up="${i}" aria-label="Subir ${esc(m.title)}" ${i===0?'disabled':''}>↑</button><button data-down="${i}" aria-label="Bajar ${esc(m.title)}" ${i===S.draft.length-1?'disabled':''}>↓</button></span></li>`; }).join('');
+  return card(`<h2>Cartelera</h2>
+      <p class="note">Estas son las cuatro propuestas. La tuya aparece marcada y no entra en tu ranking.</p>
+      <div class="list">${movies.map(m => m.mine
+        ? `<div class="film mine">${filmLine(m)}<span class="tag">Tuya</span></div>`
+        : `<div class="film">${filmLine(m)}<label class="check"><input type="checkbox" data-seen="${m.id}" ${seen.includes(m.id)?'checked':''} ${S.busy?'disabled':''}>Vista</label></div>`).join('')}</div>`)
+    + card(`<h2>Tu top 3</h2>
+      <p class="note">${allSeen ? 'Ordena de mejor a peor con las flechas. Puedes cambiarlo hasta que voten los cuatro.' : 'Marca como vistas las tres películas para poder enviar tu ranking.'}</p>
+      ${msgBox()}
+      <ol class="rank">${rankList}</ol>
+      <div class="confirm">
+        <button class="btn" data-act="submit" ${(!allSeen||S.busy||(sent&&!changed))?'disabled':''}>${sent?(changed?'Actualizar ranking':'Ranking enviado'):'Enviar ranking'}</button>
+        ${sent ? '<span class="note">Tu voto ya cuenta.</span>' : ''}
+      </div>`,
+      stub('Rankings enviados', `${done}/${MAX}`) + `<div class="stub" style="border-top:0;padding-top:0"><div class="progress">${Array.from({length:MAX},(_,i)=>`<span class="${i<done?'on':''}"></span>`).join('')}</div></div>`);
+}
+
+function viewResults() {
+  const r = S.st.results;
+  return card(`<h2>Top 4 del cineclub</h2>
+    <p class="note">Cada ranking da 3 puntos al 1.º, 2 al 2.º y 1 al 3.º. Máximo posible: 9 puntos. En caso de empate gana quien tenga más primeros puestos.</p>
+    <div class="board">${r.map((m,i) => `<div class="place${i===0?' p1':''}">
+      <div class="num">${i+1}</div>
+      <div class="t"><b>${esc(m.title)}${m.year?` <span class="note" style="display:inline">(${esc(m.year)})</span>`:''}</b>
+        <div class="meta">${chip(m.platform)}<span>${m.firsts}× primera</span>${m.mine?'<span class="tag">Tu propuesta</span>':''}</div></div>
+      <div class="pts">${m.points}<small>puntos</small></div></div>`).join('')}</div>`,
+    stub('Votos contados', `${MAX}/${MAX}`));
+}
+
+function viewAdmin() {
+  const st = S.st; if (!st || !st.me || !st.me.is_admin) return '';
+  const c = S.confirm;
+  const ask = (key, label, btn) => c === key ? `<div class="confirm"><span>${label}</span><button class="btn small" data-act="do-${key}">${btn}</button><button class="btn ghost small" data-act="cancel-confirm">Cancelar</button></div>` : '';
+  const others = st.players.filter(u => u !== st.me.username);
+  return `<details class="admin" ${c?'open':''}><summary>Herramientas del organizador</summary><div class="in">
+    <p class="note">Solo tú ves esto: fuiste el primero en registrarte.</p>
+    <div class="confirm"><button class="btn ghost small" data-act="ask-round">Empezar ronda nueva</button><button class="btn ghost small" data-act="ask-wipe">Borrar todas las cuentas</button></div>
+    ${ask('round','Se borran las 4 películas y todos los votos. Las cuentas se mantienen.','Sí, ronda nueva')}
+    ${ask('wipe','Se borra todo, también las cuentas. Todos tendréis que registraros de nuevo.','Sí, borrar todo')}
+    ${others.length ? `<div class="confirm"><span>Eliminar jugador (si olvidó su contraseña):</span>${others.map(u=>`<button class="btn ghost small" data-remove="${esc(u)}">${esc(u)}</button>`).join('')}</div>` : ''}
+    ${c && c.startsWith('rm:') ? `<div class="confirm"><span>Se elimina a <b>${esc(c.slice(3))}</b>, con su película y su voto.</span><button class="btn small" data-act="do-remove">Sí, eliminar</button><button class="btn ghost small" data-act="cancel-confirm">Cancelar</button></div>` : ''}
+  </div></details>`;
+}
+
+function render() {
+  const keep = {}; document.querySelectorAll('#app input:not([type=checkbox]),#app select').forEach(el => keep[el.id] = el.value);
+  const focus = document.activeElement && document.activeElement.id;
+  const st = S.st;
+  let html, ph = st ? st.phase : 'loading';
+  if (!configured) html = viewSetup();
+  else if (!st) html = card(`<p class="center">${S.offline ? 'No se puede conectar con el servidor. Reintentando…' : 'Abriendo la taquilla…'}</p>`);
+  else if (!st.me) html = viewAuth();
+  else if (ph === 'propose') html = viewPropose();
+  else if (ph === 'vote') html = viewVote();
+  else html = viewResults();
+  if (st && S.offline) html = `<div class="msg" style="margin-bottom:12px">Sin conexión con el servidor. Lo que ves puede no estar al día.</div>` + html;
+  document.getElementById('app').innerHTML = html;
+  for (const id in keep) { const el = document.getElementById(id); if (el && keep[id] !== '') el.value = keep[id]; }
+  if (focus) { const el = document.getElementById(focus); if (el) el.focus(); }
+  const idx = {loading:-1, propose:0, vote:1, results:2}[ph];
+  document.querySelectorAll('#steps li').forEach((li,i) => li.className = i<idx ? 'done' : i===idx ? 'on' : '');
+  document.getElementById('who').innerHTML = st && st.me ? `<span>Sesión: <b>${esc(st.me.username)}</b></span><button class="link" data-act="logout">Salir</button>` : '';
+  document.getElementById('admin').innerHTML = viewAdmin();
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.tab) { S.tab = t.dataset.tab; S.msg = null; render(); return; }
+  if (t.dataset.remove) { S.confirm = 'rm:' + t.dataset.remove; render(); return; }
+  if (t.dataset.up !== undefined || t.dataset.down !== undefined) {
+    const i = +(t.dataset.up ?? t.dataset.down), j = t.dataset.up !== undefined ? i-1 : i+1;
+    [S.draft[i], S.draft[j]] = [S.draft[j], S.draft[i]]; render(); return;
+  }
+  const a = t.dataset.act; if (!a) return;
+  if (a === 'logout') { const tok = S.token; S.token = null; setTok(null); S.draft = null; S.editing = false; S.msg = null; rpc('logout',{p_token:tok}).catch(()=>{}); refresh(); }
+  else if (a === 'edit') { S.editing = true; S.msg = null; render(); }
+  else if (a === 'cancel') { S.editing = false; render(); }
+  else if (a === 'withdraw') run(() => rpc('withdraw', {p_token:S.token}));
+  else if (a === 'submit') run(() => rpc('submit_ranking', {p_token:S.token, p_ranking:S.draft.slice()}), 'Ranking guardado.');
+  else if (a === 'ask-round') { S.confirm = 'round'; render(); }
+  else if (a === 'ask-wipe') { S.confirm = 'wipe'; render(); }
+  else if (a === 'cancel-confirm') { S.confirm = null; render(); }
+  else if (a === 'do-round') run(async () => { await rpc('admin_reset', {p_token:S.token, p_wipe:false}); S.confirm=null; S.draft=null; }, 'Ronda nueva lista. Ya se pueden proponer películas.');
+  else if (a === 'do-wipe') run(async () => { await rpc('admin_reset', {p_token:S.token, p_wipe:true}); S.confirm=null; S.token=null; setTok(null); }, 'Todo borrado.');
+  else if (a === 'do-remove') { const u = S.confirm.slice(3); run(async () => { await rpc('admin_remove_player', {p_token:S.token, p_username:u}); S.confirm=null; }, `Cuenta de ${u} eliminada.`); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.dataset && e.target.dataset.seen; if (!id) return;
+  run(() => rpc('set_seen', {p_token:S.token, p_movie:id, p_seen:e.target.checked}));
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = id => (document.getElementById(id) || {}).value || '';
+  if (e.target.id === 'authForm') {
+    const u = v('a_user'), p = v('a_pass'), p2 = v('a_pass2');
+    run(async () => {
+      if (S.tab === 'register' && p !== p2) throw 'Las contraseñas no coinciden.';
+      const res = await rpc(S.tab === 'register' ? 'register' : 'login', {p_username:u, p_password:p});
+      S.token = res.token; setTok(res.token); S.draft = null;
+    });
+  } else if (e.target.id === 'movieForm') {
+    const y = v('m_year').trim();
+    run(async () => {
+      if (y && !/^\d{4}$/.test(y)) throw 'El año debe tener 4 cifras (por ejemplo 1994).';
+      if (!v('m_plat')) throw 'Elige en qué plataforma se puede ver.';
+      await rpc('propose', {p_token:S.token, p_title:v('m_title'), p_year:y?+y:null, p_platform:v('m_plat')});
+      S.editing = false;
+    });
+  }
+});
+
+/* ---------- arranque y refresco periódico ---------- */
+render();
+if (configured) {
+  refresh();
+  setInterval(() => { if (!document.hidden && !S.busy) refresh(); }, POLL_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+}
+})();
+</script>
+</body>
+</html>
